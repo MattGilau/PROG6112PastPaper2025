@@ -141,25 +141,61 @@ public class ProductSalesForm extends JFrame implements ActionListener {
         }
     }
 
-    // ---------- shared methods (Section 5) ----------
+    // ---------- shared methods: called by BOTH the buttons and the menu items ----------
     /**
-     * Load: calculate the results and display them (Section 5).
+     * Load: creates a ProductSales object from the data in memory, calculates
+     * the results and displays them in the text area (Q.2.2). The years
+     * processed come from the array via GetProductsProcessed(), never from a
+     * typed-in value.
      */
     private void loadProductData() {
-        // TODO Section 5
+        ProductSales productSales = new ProductSales(SALES_DATA);
+
+        // the sample shows the average rounded to a whole number (367)
+        txtResults.setText("Total Sales: " + productSales.GetTotalSales() + "\n"
+                + "Average Sales: " + Math.round(productSales.GetAverageSales()) + "\n"
+                + "Sales over limit: " + productSales.GetSalesOverLimit() + "\n"
+                + "Sales under limit: " + productSales.GetSalesUnderLimit());
+
+        lblYearsProcessed.setText(YEARS_LABEL + productSales.GetProductsProcessed());
     }
 
     /**
-     * Save: write the text area to data.txt (Section 5).
+     * Save: writes the heading, a line of stars, the text area's contents and
+     * another line of stars to data.txt (format from the paper's sample,
+     * Q.2.2). The file is created in the project folder.
      */
     private void saveProductData() {
-        // TODO Section 5
+        // nothing to save until the data has been loaded
+        if (txtResults.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please load the product data first.");
+            return;
+        }
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME));
+            writer.write(FILE_HEADING);
+            writer.newLine();
+            writer.write(STARS);
+            writer.newLine();
+            writer.write(txtResults.getText());
+            writer.newLine();
+            writer.write(STARS);
+            writer.newLine();
+            writer.close();                                 // close() makes sure the text is written
+            JOptionPane.showMessageDialog(this, "Product data saved to " + FILE_NAME);
+        } catch (IOException ex) {
+            // the compiler requires IOException to be handled (Farrell, 2023, p.397)
+            JOptionPane.showMessageDialog(this, "Error saving file: " + ex.getMessage());
+        }
     }
 
     /**
-     * Clear: empty the text area and the label (Section 5).
+     * Clear: removes the text in the text area and clears the Years Processed
+     * label (Q.2.3). The caption "Years Processed: " is kept so the user knows
+     * what the label shows.
      */
     private void clearForm() {
-        // TODO Section 5
+        txtResults.setText("");
+        lblYearsProcessed.setText(YEARS_LABEL);
     }
 }
